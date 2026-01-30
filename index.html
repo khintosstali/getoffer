@@ -1,48 +1,15 @@
-<script>
-    // الرابط الصحيح ديال OGAds الجديد
-    const API_URL = "https://lockedapp.space/api/v2?get_offers=true";
-    const API_KEY = "38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876";
+// هادا هو البديل ديال PHP فـ GitHub
+async function loadFromAPI() {
+    const api_key = '38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876';
+    const endpoint = 'https://lockedapp.space/api/v2?get_offers=true';
 
-    async function loadOffer() {
-        const btn = document.getElementById("offer-link");
-        const img = document.getElementById("offer-img");
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'GET',
-                headers: {
-                    "Authorization": "Bearer " + API_KEY
-                }
-            });
-            
-            const data = await response.json();
-
-            if (data.success && data.offers && data.offers.length > 0) {
-                const mainOffer = data.offers[0];
-
-                // كيحط تصويرة العرض
-                if(img && mainOffer.picture) img.src = mainOffer.picture;
-                
-                // كيرد الزر كيصيفط نيشان لرابط العرض
-                btn.innerText = "Start Offer Now";
-                btn.onclick = function() {
-                    window.location.href = mainOffer.link;
-                };
-            } else {
-                btn.innerText = "No Offers available";
-            }
-        } catch (error) {
-            console.error("API Error:", error);
-            btn.innerText = "Error Loading Offers";
-        }
+    const response = await fetch(endpoint, {
+        headers: { 'Authorization': 'Bearer ' + api_key }
+    });
+    const data = await response.json();
+    
+    if(data.success) {
+        // هنا كتحط المنطق ديالك (بحال الـ PHP تماما)
+        console.log("Offers loaded:", data.offers);
     }
-
-    // هادي هي اللي كتعيط ليها ملي كيورك بنادم على الزر الأول
-    function start() {
-        if(typeof confetti === 'function') {
-            confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
-        }
-        document.getElementById("locker").style.display = "flex";
-        loadOffer(); // كيبدا يشارجي العروض غير كيتحل اللوكر
-    }
-</script>
+}
