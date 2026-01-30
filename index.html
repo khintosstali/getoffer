@@ -1,53 +1,46 @@
-<script>
-    // الإعدادات ديالك
-    const api_key = '38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876';
-    const endpoint = 'https://lockedapp.space/api/v2?get_offers=true';
+<div id="locker" style="display:none;">
+        <img id="offer-img" src="https://via.placeholder.com/100" />
+        <button id="offer-link" class="start-btn">Checking...</button>
+    </div>
 
-    // الفانكشن الأساسية اللي كتحاكي الـ PHP
-    async function loadFromAPI() {
-        const btn = document.getElementById("offer-link");
-        const img = document.getElementById("offer-img");
+    <script>
+        const api_key = '38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876';
+        const endpoint = 'https://lockedapp.space/api/v2?get_offers=true';
 
-        try {
-            const response = await fetch(endpoint, {
-                headers: { 'Authorization': 'Bearer ' + api_key }
-            });
-            const data = await response.json();
-            
-            if(data.success && data.offers && data.offers.length > 0) {
-                console.log("Offers loaded:", data.offers);
+        async function loadFromAPI() {
+            const btn = document.getElementById("offer-link");
+            const img = document.getElementById("offer-img");
+
+            try {
+                const response = await fetch(endpoint, {
+                    headers: { 'Authorization': 'Bearer ' + api_key }
+                });
+                const data = await response.json();
                 
-                // كنختارو أول عرض متاح
-                const firstOffer = data.offers[0];
-                
-                // تحديث الواجهة بالعرض اللي تختار
-                if(img && firstOffer.picture) img.src = firstOffer.picture;
-                
-                btn.innerText = "Start & Verify Now";
-                btn.onclick = function() {
-                    window.location.href = firstOffer.link;
-                };
-            } else {
-                console.log("No offers found.");
-                btn.innerText = "No Offers Currently";
+                if(data.success && data.offers && data.offers.length > 0) {
+                    const firstOffer = data.offers[0];
+                    
+                    // تحديث العناصر
+                    if(img) img.src = firstOffer.picture;
+                    if(btn) {
+                        btn.innerText = "Start Offer Now";
+                        btn.onclick = function() {
+                            window.location.href = firstOffer.link;
+                        };
+                    }
+                } else {
+                    if(btn) btn.innerText = "No Offers Available";
+                }
+            } catch (error) {
+                if(btn) btn.innerText = "Connection Error";
             }
-        } catch (error) {
-            console.error("API Error:", error);
-            btn.innerText = "Connection Error";
-        }
-    }
-
-    // هادي هي اللي مربوطة بالزر الأول (Unlock My Gift)
-    function startNow() {
-        // إظهار اللوكر (Overlay)
-        document.getElementById("locker").style.display = "flex";
-        
-        // تأثير الكونفيتي
-        if(typeof confetti === 'function') {
-            confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
         }
 
-        // تشغيل الـ API باش يجيب العروض
-        loadFromAPI();
-    }
-</script>
+        function startNow() {
+            document.getElementById("locker").style.display = "flex";
+            if(window.confetti) confetti({particleCount:150, spread:70, origin:{y:0.6}});
+            loadFromAPI();
+        }
+    </script>
+</body>
+</html>
