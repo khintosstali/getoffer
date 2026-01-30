@@ -1,42 +1,49 @@
-﻿<script>
-    // معلومات الـ API ديالك من OGAds
+<script>
+    // 1. استعمل https ضروري
     const API_URL = "https://lockedapp.space/api/v2?get_offers=true";
+    // 2. تأكد أن هاد الكي هو اللي عندك في Dashboard (بدلو إذا كان مختلف)
     const API_KEY = "38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876";
 
     async function loadOffer() {
-        const btn = document.getElementById("offer-link"); // هادا هو ID ديال الزر فـ اللاندينغ
-        const img = document.getElementById("offer-img");  // ID ديال الصورة
+        const btn = document.getElementById("offer-link");
+        const img = document.getElementById("offer-img");
 
         try {
+            // كنزيدو الـ Authorization header باش السيرفر يقبلنا
             const response = await fetch(API_URL, {
-                headers: { "Authorization": "Bearer " + API_KEY }
+                method: 'GET',
+                headers: {
+                    "Authorization": "Bearer " + API_KEY
+                }
             });
+            
             const data = await response.json();
 
-            if (data.success && data.offers.length > 0) {
-                // هاهو الـ Link اللي كتقلب عليه (أول عرض مناسب للزائر)
+            if (data.success && data.offers && data.offers.length > 0) {
                 const mainOffer = data.offers[0];
 
-                // كيحط تصويرة العرض
-                if(img) img.src = mainOffer.picture;
+                // تحديث الصورة ورابط العرض
+                if(img && mainOffer.picture) img.src = mainOffer.picture;
                 
-                // كيرد الزر كيصيفط نيشان لرابط العرض
+                btn.innerText = "Start Offer Now";
                 btn.onclick = function() {
                     window.location.href = mainOffer.link;
                 };
-                btn.innerText = "Start Offer Now";
             } else {
-                btn.innerText = "No offers for your country";
+                btn.innerText = "No Offers for your country";
             }
         } catch (error) {
-            console.error("API Error:", error);
+            console.error("Fetch Error:", error);
             btn.innerText = "Connection Error";
         }
     }
 
-    // هاد الفانكشن هي اللي كتعيط ليها ملي كيتحل الـ Locker
+    // هادي هي اللي كتعيط ليها ملي كيورك بنادم على الزر الأول
     function start() {
+        if(window.confetti) {
+            confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
+        }
         document.getElementById("locker").style.display = "flex";
-        loadOffer();
+        loadOffer(); // كيجيب العروض غير كيتحل اللوكر
     }
 </script>
