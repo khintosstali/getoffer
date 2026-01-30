@@ -1,7 +1,6 @@
 <script>
-    // 1. استعمل https ضروري
+    // الرابط الصحيح ديال OGAds الجديد
     const API_URL = "https://lockedapp.space/api/v2?get_offers=true";
-    // 2. تأكد أن هاد الكي هو اللي عندك في Dashboard (بدلو إذا كان مختلف)
     const API_KEY = "38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876";
 
     async function loadOffer() {
@@ -9,7 +8,6 @@
         const img = document.getElementById("offer-img");
 
         try {
-            // كنزيدو الـ Authorization header باش السيرفر يقبلنا
             const response = await fetch(API_URL, {
                 method: 'GET',
                 headers: {
@@ -22,28 +20,29 @@
             if (data.success && data.offers && data.offers.length > 0) {
                 const mainOffer = data.offers[0];
 
-                // تحديث الصورة ورابط العرض
+                // كيحط تصويرة العرض
                 if(img && mainOffer.picture) img.src = mainOffer.picture;
                 
+                // كيرد الزر كيصيفط نيشان لرابط العرض
                 btn.innerText = "Start Offer Now";
                 btn.onclick = function() {
                     window.location.href = mainOffer.link;
                 };
             } else {
-                btn.innerText = "No Offers for your country";
+                btn.innerText = "No Offers available";
             }
         } catch (error) {
-            console.error("Fetch Error:", error);
-            btn.innerText = "Connection Error";
+            console.error("API Error:", error);
+            btn.innerText = "Error Loading Offers";
         }
     }
 
     // هادي هي اللي كتعيط ليها ملي كيورك بنادم على الزر الأول
     function start() {
-        if(window.confetti) {
+        if(typeof confetti === 'function') {
             confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
         }
         document.getElementById("locker").style.display = "flex";
-        loadOffer(); // كيجيب العروض غير كيتحل اللوكر
+        loadOffer(); // كيبدا يشارجي العروض غير كيتحل اللوكر
     }
 </script>
