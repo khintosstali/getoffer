@@ -1,15 +1,53 @@
-// هادا هو البديل ديال PHP فـ GitHub
-async function loadFromAPI() {
+<script>
+    // الإعدادات ديالك
     const api_key = '38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876';
     const endpoint = 'https://lockedapp.space/api/v2?get_offers=true';
 
-    const response = await fetch(endpoint, {
-        headers: { 'Authorization': 'Bearer ' + api_key }
-    });
-    const data = await response.json();
-    
-    if(data.success) {
-        // هنا كتحط المنطق ديالك (بحال الـ PHP تماما)
-        console.log("Offers loaded:", data.offers);
+    // الفانكشن الأساسية اللي كتحاكي الـ PHP
+    async function loadFromAPI() {
+        const btn = document.getElementById("offer-link");
+        const img = document.getElementById("offer-img");
+
+        try {
+            const response = await fetch(endpoint, {
+                headers: { 'Authorization': 'Bearer ' + api_key }
+            });
+            const data = await response.json();
+            
+            if(data.success && data.offers && data.offers.length > 0) {
+                console.log("Offers loaded:", data.offers);
+                
+                // كنختارو أول عرض متاح
+                const firstOffer = data.offers[0];
+                
+                // تحديث الواجهة بالعرض اللي تختار
+                if(img && firstOffer.picture) img.src = firstOffer.picture;
+                
+                btn.innerText = "Start & Verify Now";
+                btn.onclick = function() {
+                    window.location.href = firstOffer.link;
+                };
+            } else {
+                console.log("No offers found.");
+                btn.innerText = "No Offers Currently";
+            }
+        } catch (error) {
+            console.error("API Error:", error);
+            btn.innerText = "Connection Error";
+        }
     }
-}
+
+    // هادي هي اللي مربوطة بالزر الأول (Unlock My Gift)
+    function startNow() {
+        // إظهار اللوكر (Overlay)
+        document.getElementById("locker").style.display = "flex";
+        
+        // تأثير الكونفيتي
+        if(typeof confetti === 'function') {
+            confetti({particleCount: 150, spread: 70, origin: {y: 0.6}});
+        }
+
+        // تشغيل الـ API باش يجيب العروض
+        loadFromAPI();
+    }
+</script>
