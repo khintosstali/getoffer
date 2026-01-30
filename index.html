@@ -1,0 +1,42 @@
+﻿<script>
+    // معلومات الـ API ديالك من OGAds
+    const API_URL = "https://lockedapp.space/api/v2?get_offers=true";
+    const API_KEY = "38340|k9HXTGdaGKF73vx0vAQ3SYLSKBk3BA2X8oiMklfn559be876";
+
+    async function loadOffer() {
+        const btn = document.getElementById("offer-link"); // هادا هو ID ديال الزر فـ اللاندينغ
+        const img = document.getElementById("offer-img");  // ID ديال الصورة
+
+        try {
+            const response = await fetch(API_URL, {
+                headers: { "Authorization": "Bearer " + API_KEY }
+            });
+            const data = await response.json();
+
+            if (data.success && data.offers.length > 0) {
+                // هاهو الـ Link اللي كتقلب عليه (أول عرض مناسب للزائر)
+                const mainOffer = data.offers[0];
+
+                // كيحط تصويرة العرض
+                if(img) img.src = mainOffer.picture;
+                
+                // كيرد الزر كيصيفط نيشان لرابط العرض
+                btn.onclick = function() {
+                    window.location.href = mainOffer.link;
+                };
+                btn.innerText = "Start Offer Now";
+            } else {
+                btn.innerText = "No offers for your country";
+            }
+        } catch (error) {
+            console.error("API Error:", error);
+            btn.innerText = "Connection Error";
+        }
+    }
+
+    // هاد الفانكشن هي اللي كتعيط ليها ملي كيتحل الـ Locker
+    function start() {
+        document.getElementById("locker").style.display = "flex";
+        loadOffer();
+    }
+</script>
